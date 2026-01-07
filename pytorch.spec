@@ -34,6 +34,8 @@ URL:            https://pytorch.org
 Patch1:         pytorch-C.patch
 Patch2:         pytorch-clang.patch
 
+BuildRequires:  cuda-glibc-patch
+BuildRequires:  mold
 BuildRequires:  ninja-build
 BuildRequires:  git doxygen cmake cmake-rpm-macros python3-devel pybind11-devel
 BuildRequires:  python3-typing-extensions python3-pyyaml python3-setuptools
@@ -438,7 +440,6 @@ export LD_LIBRARY_PATH="/usr/local/cuda-%{vcu_maj}.%{vcu_min}/%{_lib}/"
        -DCMAKE_NO_SYSTEM_FROM_IMPORTED=ON \
        -DCMAKE_SKIP_RULE_DEPENDENCY=ON \
        -DCMAKE_SUPPRESS_REGENERATION=ON \
-       -DCMAKE_JOB_POOL_LINK=1 \
        -DUSE_CCACHE=OFF \
        -DHAVE_SOVERSION=ON \
        -DUSE_NATIVE_ARCH=OFF \
@@ -458,6 +459,9 @@ export LD_LIBRARY_PATH="/usr/local/cuda-%{vcu_maj}.%{vcu_min}/%{_lib}/"
        -DONNX_ML=ON \
        -DUSE_GLOG=ON \
        -DUSE_GFLAGS=ON \
+       -DCMAKE_SHARED_LINKER_FLAGS="-fuse-ld=mold" \
+       -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=mold" \
+       -DCMAKE_MODULE_LINKER_FLAGS="-fuse-ld=mold" \
 %if "%{toolchain}" == "gcc"
        -DUSE_OPENMP=ON \
 %else
